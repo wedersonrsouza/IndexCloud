@@ -1,7 +1,9 @@
 from elasticsearch import Elasticsearch
 
-# Crie uma instância do Elasticsearch
-es = Elasticsearch([{'host': 'localhost', 'port': 9292}])
+es_host = 'http://localhost:9292'  # Substitua pelo host do seu Elasticsearch
+
+# Conectar ao Elasticsearch
+es = Elasticsearch([es_host])
 
 # Defina a consulta de pesquisa
 query = {"query": {"match_all": {}}}
