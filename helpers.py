@@ -42,3 +42,19 @@ def index_to_es(es, index, doc_type, id, body):
 def verificar_arquivos(lista_de_arquivos):
     lista_de_arquivos[:] = [arquivo for arquivo in lista_de_arquivos if os.path.exists(arquivo)]
     return lista_de_arquivos
+
+
+def gerar_hash_arquivos(diretorio):
+    lista_hashes = []
+
+    for root, dirs, files in os.walk(diretorio):
+        for file in files:
+            file_path = os.path.join(root, file)
+            with open(file_path, 'rb') as f:
+                data = f.read()
+                hash = hashlib.sha256(data).hexdigest()
+                lista_hashes.append((file_path, hash))
+                
+    # print(lista_hashes)
+
+    return lista_hashes

@@ -9,7 +9,7 @@ def extract_text_from_image_pdf(pdf_path):
         for page in pdf_document: # iterate the document pages
             text += page.get_text() # get plain text encoded as UTF-8
             
-        print(text)
+        # print(text)
         return text
     except Exception as e:
         return f"Erro ao extrair texto: {str(e)}"

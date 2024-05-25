@@ -10,7 +10,6 @@ query = {"query": {"match_all": {}}}
 
 
 # Execute a pesquisa
-
 res = es.search(index='teste-index2', body=query)
 #
 # print(res['hits'])
