@@ -4,8 +4,10 @@ from typing import List, Tuple
 
 from elasticsearch import Elasticsearch
 
+from clean_index import delete_index
+from create_index import create_index
 from helpers import (calculate_hash, find_cpfs, generate_file_hashes,
-                     index_to_es)
+                     get_file_metadata, get_office_metadata, index_to_es)
 from index_docx import read_docx
 from index_pdf import extract_text_from_image_pdf
 
@@ -14,6 +16,7 @@ class Indexer:
     def __init__(self, es_host: str, index_name: str):
         self.es = Elasticsearch([es_host])
         self.index = index_name
+        
 
     def check_already_indexed(self, hash: str) -> dict:
         try:
@@ -21,6 +24,7 @@ class Indexer:
             return self.es.search(index=self.index, body=query)
         except Exception as e:
             print(f'Error check alread indexed file')
+            print(e)
             
     def update_file_path(self, hash: str, file_paths: List[str]) -> dict:
         try:
@@ -43,25 +47,48 @@ class Indexer:
                         file_path = os.path.join(root, file)
                         hash = str(calculate_hash(file_path))
                         indexed = self.check_already_indexed(hash=hash)
-
-                        if indexed['_shards']['successful'] >= 1:
+                        
+                        print(indexed)
+                        
+                        if len(indexed['hits']['hits']) >= 1:
                             print("\n\n\nFile already indexed, looking for duplicates...")
                             duplicate_files = [item for item in file_hashes if item[1] == hash]
                             duplicate_file_paths = [item[0] for item in duplicate_files]
+                            
                             self.update_file_path(hash=hash, file_paths=duplicate_file_paths)
+                        
                         else:
                             content = read_docx(file_path) if file.endswith('.docx') else extract_text_from_image_pdf(file_path)
+                            
+                            metadatas = None
+                                                        
+                            if any(file.endswith(ext) for ext in ['.doc', '.docx', '.xlsx']):
+                                # print('\n\nArquivo Office detectado')
+                                metadatas = get_office_metadata(file_path)
+                                
+                            else:
+                                metadatas = get_file_metadata(file_path)
+                                
+                            
+                                
                             if content:
                                 cpfs = find_cpfs(content)
                                 body = {
                                     'content': str(content),
                                     'entities': cpfs,
                                     'hash': hash,
-                                    'path': [file_path]
+                                    'path': [file_path],
+                                    'metadatas': metadatas
                                 }
                                 result = index_to_es(es=self.es, index=self.index, doc_type='_doc', id=hash, body=body)
-                                if result:
-                                    indexed_hashes.append(hash)
+                                indexed_hashes.append(hash)
+                                
+                                print("\n\n\nLooking for duplicates...")
+                                duplicate_files = [item for item in file_hashes if item[1] == hash]
+                                duplicate_file_paths = [item[0] for item in duplicate_files]
+                                
+                                self.update_file_path(hash=hash, file_paths=duplicate_file_paths)
+                            
                     except Exception as e:
                         print(f'\n\n\nError processing file {file}')
                         print(f'\n\n{e}')
@@ -70,5 +97,16 @@ class Indexer:
 
 if __name__ == '__main__':
     es_host = 'http://localhost:9292'
-    indexer = Indexer(es_host=es_host, index_name='teste-index2')
-    indexer.index_files(directory='.\\dados', extensions=['.doc', '.docx', '.pdf'])
+    index_name = 'teste-index2'
+    
+    print(f'\n\nExcluindo indice {index_name}')
+    response = delete_index(es_host, index_name)
+    print(response)
+    
+    print(f'\n\nCriando novo indice {index_name}')
+    response = create_index(es_host, index_name)
+    print(response)
+    
+    indexer = Indexer(es_host=es_host, index_name=index_name)
+    
+    indexer.index_files(directory='.\\dados', extensions=['.doc', '.docx', '.xls', '.xlsx'])
