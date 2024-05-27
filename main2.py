@@ -114,5 +114,5 @@ if __name__ == '__main__':
     
     indexer = Indexer(es_host=es_host, index_name=index_name)
     
-    indexer.index_files(directory='.\\dados', extensions=['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
+    indexer.index_files(directory='/home/SRV-VLACloud/nextcloud/data/', extensions=['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
     # indexer.index_files(directory='.\\dados_imagens', extensions=['.png'])
