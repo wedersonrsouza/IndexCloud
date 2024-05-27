@@ -109,4 +109,4 @@ if __name__ == '__main__':
     
     indexer = Indexer(es_host=es_host, index_name=index_name)
     
-    indexer.index_files(directory='.\\dados', extensions=['.doc', '.docx', '.xls', '.xlsx'])
+    indexer.index_files(directory='.\\dados', extensions=['.doc', '.docx', '.xls', '.xlsx', '.pdf'])
