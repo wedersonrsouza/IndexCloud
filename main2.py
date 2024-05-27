@@ -9,6 +9,7 @@ from create_index import create_index
 from helpers import (calculate_hash, find_cpfs, generate_file_hashes,
                      get_file_metadata, get_office_metadata, index_to_es)
 from index_docx import read_docx
+from index_imagens import extract_text_from_image
 from index_pdf import extract_text_from_image_pdf
 
 
@@ -58,19 +59,23 @@ class Indexer:
                             self.update_file_path(hash=hash, file_paths=duplicate_file_paths)
                         
                         else:
-                            content = read_docx(file_path) if file.endswith('.docx') else extract_text_from_image_pdf(file_path)
                             
                             metadatas = None
-                                                        
+                            
                             if any(file.endswith(ext) for ext in ['.doc', '.docx', '.xlsx']):
-                                # print('\n\nArquivo Office detectado')
-                                metadatas = get_office_metadata(file_path)
+                                content = read_docx(file_path)
                                 
-                            else:
+                                metadatas = get_office_metadata(file_path)
+                            elif any(file.endswith(ext) for ext in ['.pdf']):
+                                content = extract_text_from_image_pdf(file_path)
+                                
+                                metadatas = get_file_metadata(file_path)
+                                
+                            elif any(file.endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.bmp']):
+                                content = extract_text_from_image(file_path)
                                 metadatas = get_file_metadata(file_path)
                                 
                             
-                                
                             if content:
                                 cpfs = find_cpfs(content)
                                 body = {
@@ -97,7 +102,7 @@ class Indexer:
 
 if __name__ == '__main__':
     es_host = 'http://localhost:9292'
-    index_name = 'teste-index2'
+    index_name = 'vla_cloud'
     
     print(f'\n\nExcluindo indice {index_name}')
     response = delete_index(es_host, index_name)
@@ -109,4 +114,5 @@ if __name__ == '__main__':
     
     indexer = Indexer(es_host=es_host, index_name=index_name)
     
-    indexer.index_files(directory='.\\dados', extensions=['.doc', '.docx', '.xls', '.xlsx', '.pdf'])
+    indexer.index_files(directory='.\\dados', extensions=['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
+    # indexer.index_files(directory='.\\dados_imagens', extensions=['.png'])
