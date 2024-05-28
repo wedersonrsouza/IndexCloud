@@ -37,7 +37,8 @@ class Indexer:
 
     def index_files(self, directory: str, extensions: List[str]) -> List[str]:
         
-        file_hashes = generate_file_hashes(directory)
+        # file_hashes = generate_file_hashes(directory)
+        file_hashes = hashes = generate_file_hashes(directory, ['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
         indexed_hashes = []
 
         for root, _, files in os.walk(directory):

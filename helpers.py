@@ -11,6 +11,7 @@ from docx.document import Document
 from docx.opc.coreprops import CoreProperties
 from openpyxl import load_workbook
 
+from concurrent.futures import ThreadPoolExecutor
 
 def get_office_metadata(file_path: str) -> dict:
     
@@ -105,15 +106,39 @@ def index_to_es(es, index, doc_type, id, body):
         
         
 
-def generate_file_hashes(destination_path: str) -> List[str]:
+# def generate_file_hashes(destination_path: str) -> List[str]:
+#     list_hashes = []
+
+#     for root, dirs, files in os.walk(destination_path):
+#         for file in files:
+#             file_path = os.path.join(root, file)
+#             with open(file_path, 'rb') as f:
+#                 data = f.read()
+#                 hash = hashlib.sha256(data).hexdigest()
+#                 list_hashes.append((file_path, hash))
+                
+#     return list_hashes
+
+
+
+
+def calculate_hash(file_path: str) -> str:
+    with open(file_path, 'rb') as f:
+        data = f.read()
+        hash = hashlib.sha256(data).hexdigest()
+    return file_path, hash
+
+def generate_file_hashes(destination_path: str, extensions: List[str]) -> List[str]:
     list_hashes = []
+    files_to_hash = []
 
     for root, dirs, files in os.walk(destination_path):
         for file in files:
-            file_path = os.path.join(root, file)
-            with open(file_path, 'rb') as f:
-                data = f.read()
-                hash = hashlib.sha256(data).hexdigest()
-                list_hashes.append((file_path, hash))
+            if file.endswith(tuple(extensions)):
+                file_path = os.path.join(root, file)
+                files_to_hash.append(file_path)
+
+    with ThreadPoolExecutor() as executor:
+        list_hashes = list(executor.map(calculate_hash, files_to_hash))
                 
     return list_hashes
