@@ -1,7 +1,6 @@
 easyocr
-elasticsearch==7.13.4
-opencv-python==4.9.0.80
-opencv-python-headless==4.9.0.80
+elasticsearch
+opencv-python
 openpyxl
 PyMuPDF==1.24.4
 pytesseract
