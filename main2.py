@@ -105,7 +105,7 @@ class Indexer:
 
 
 if __name__ == '__main__':
-    es_host = 'http://localhost:9292'
+    es_host = 'http://elasticsearch:9292'
     index_name = 'vla_cloud'
     
     print(f'\n\nExcluindo indice {index_name}')
@@ -118,5 +118,5 @@ if __name__ == '__main__':
     
     indexer = Indexer(es_host=es_host, index_name=index_name)
     
-    indexer.index_files(directory='/home/SRV-VLACloud/nextcloud/data/', extensions=['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
+    indexer.index_files(directory='/app/dados/', extensions=['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
     # indexer.index_files(directory='.\\dados_imagens', extensions=['.png'])
