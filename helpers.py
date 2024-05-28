@@ -133,6 +133,10 @@ def generate_file_hashes(destination_path: str, extensions: List[str]) -> List[s
     files_to_hash = []
 
     for root, dirs, files in os.walk(destination_path):
+
+        dirs[:] = [d for d in dirs if not d.startswith('appdata')]
+        dirs[:] = [d for d in dirs if not d.startswith('admin')]
+
         for file in files:
             if file.endswith(tuple(extensions)):
                 file_path = os.path.join(root, file)
