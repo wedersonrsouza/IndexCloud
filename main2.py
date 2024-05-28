@@ -41,7 +41,10 @@ class Indexer:
         file_hashes = hashes = generate_file_hashes(directory, ['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
         indexed_hashes = []
 
-        for root, _, files in os.walk(directory):
+        for root, dirs, files in os.walk(directory):
+            dirs[:] = [d for d in dirs if not d.startswith('appdata')]
+            dirs[:] = [d for d in dirs if not d.startswith('admin')]
+            
             for file in files:
                 if any(file.endswith(ext) for ext in extensions):
                     print(f"Indexing file {file}")
