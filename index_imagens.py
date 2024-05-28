@@ -2,6 +2,8 @@ import cv2
 import pytesseract
 import numpy as np
 import easyocr
+import torch
+torch.backends.nnpack.enabled = False
 
 
 def extract_text_from_image(image_path):
@@ -15,6 +17,7 @@ def extract_text_from_image(image_path):
     # text = pytesseract.image_to_string(imagem_gray)
     
     reader = easyocr.Reader(['pt']) # pass list of languages to recognize
+    
     ocr_result = reader.readtext(image_path)
     
     # Extrair apenas os textos
