@@ -47,16 +47,16 @@ class Indexer:
             
             for file in files:
                 if any(file.endswith(ext) for ext in extensions):
-                    print(f"Indexing file {file}")
+                    print(f"\n\n##### -> Indexing file {file}")
                     try:
                         file_path = os.path.join(root, file)
+                        
                         hash = str(calculate_hash(file_path))
+                        
                         indexed = self.check_already_indexed(hash=hash)
                         
-                        print(indexed)
-                        
                         if len(indexed['hits']['hits']) >= 1:
-                            print("\n\n\nFile already indexed, looking for duplicates...")
+                            print(f"\n\n\nFile {file} already indexed, looking for duplicates...")
                             duplicate_files = [item for item in file_hashes if item[1] == hash]
                             duplicate_file_paths = [item[0] for item in duplicate_files]
                             
