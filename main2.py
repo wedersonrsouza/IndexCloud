@@ -75,9 +75,9 @@ class Indexer:
                                 
                                 metadatas = get_file_metadata(file_path)
                                 
-                            elif any(file.endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.bmp']):
-                                content = extract_text_from_image(file_path)
-                                metadatas = get_file_metadata(file_path)
+                            # elif any(file.endswith(ext) for ext in ['.png', '.jpg', '.jpeg', '.bmp']):
+                            #     content = extract_text_from_image(file_path)
+                            #     metadatas = get_file_metadata(file_path)
                                 
                             
                             if content:
@@ -118,5 +118,5 @@ if __name__ == '__main__':
     
     indexer = Indexer(es_host=es_host, index_name=index_name)
     
-    indexer.index_files(directory='/app/dados/', extensions=['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
+    indexer.index_files(directory='/app/dados/', extensions=['.doc', '.docx', '.xls', '.xlsx', '.pdf'])
     # indexer.index_files(directory='.\\dados_imagens', extensions=['.png'])

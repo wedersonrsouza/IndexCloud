@@ -2,7 +2,7 @@ easyocr
 elasticsearch
 opencv-python
 openpyxl
-PyMuPDF==1.24.4
+PyMuPDF
 pytesseract
 python-docx
 torch
