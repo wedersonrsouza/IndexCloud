@@ -38,6 +38,14 @@ services:
         depends_on:
             - elasticsearch
 
+    index_cloud:
+        image: python:3.9-buster
+        volumes:
+            - .:/app
+            - /home/SRV-VLACloud/nextcloud/data/:/app/dados/
+        working_dir: /app
+        command: tail -f /dev/null
+
 volumes:
     esdata2:
         driver: local
