@@ -46,6 +46,15 @@ services:
         working_dir: /app
         command: tail -f /dev/null
 
+    index_frontend:
+    image: node:18.12.1
+    volumes:
+        - ./frontend/:/app
+    working_dir: /app
+    command: bash -c "npm install && npm start"
+    ports:
+        - "3000:3000"
+
 volumes:
     esdata2:
         driver: local
