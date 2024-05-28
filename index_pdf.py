@@ -1,13 +1,13 @@
-import pymupdf
+import fitz
 
 
 def extract_text_from_image_pdf(pdf_path):
     try:
         
-        pdf_document = pymupdf.open(pdf_path)
+        pdf_document = fitz.open(pdf_path)
         text = ""
         for page in pdf_document: # iterate the document pages
-            text += page.get_text() # get plain text encoded as UTF-8
+            text += page.getText() # get plain text encoded as UTF-8
             
         # print(text)
         return text
