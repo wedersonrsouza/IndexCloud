@@ -105,7 +105,7 @@ class Indexer:
 
 
 if __name__ == '__main__':
-    es_host = 'http://elasticsearch:9292'
+    es_host = 'http://elasticsearch:9200'
     index_name = 'vla_cloud'
     
     print(f'\n\nExcluindo indice {index_name}')
