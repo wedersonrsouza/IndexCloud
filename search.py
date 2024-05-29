@@ -1,6 +1,6 @@
 from elasticsearch import Elasticsearch
 
-es_host = 'http://localhost:9292'  # Substitua pelo host do seu Elasticsearch
+es_host = 'http://elasticsearch:9200'  # Substitua pelo host do seu Elasticsearch
 
 # Conectar ao Elasticsearch
 es = Elasticsearch([es_host])
@@ -10,7 +10,7 @@ query = {"query": {"match_all": {}}}
 
 
 # Execute a pesquisa
-res = es.search(index='teste-index2', body=query)
+res = es.search(index='vla_cloud', body=query)
 #
 # print(res['hits'])
 # Imprima os resultados

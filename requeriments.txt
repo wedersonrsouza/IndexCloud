@@ -1,8 +1,0 @@
-easyocr
-elasticsearch
-opencv-python
-openpyxl
-PyMuPDF
-pytesseract
-python-docx
-torch

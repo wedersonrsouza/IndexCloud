@@ -29,7 +29,12 @@ class Indexer:
             
     def update_file_path(self, hash: str, file_paths: List[str]) -> dict:
         try:
-            return self.es.update(index=self.index, id=hash, body={"doc": {"path": file_paths}})
+            print('\n\n Atualizando arquivos duplicados no Elasticsearch')
+            print(file_paths)
+            
+            result = self.es.update(index=self.index, id=hash, body={"doc": {"path": file_paths}})
+            
+            return result
                 
         except Exception as e:
             # print(f'\n\n\nError update file paths:\n {file_paths}')
@@ -38,7 +43,10 @@ class Indexer:
     def index_files(self, directory: str, extensions: List[str]) -> List[str]:
         
         # file_hashes = generate_file_hashes(directory)
-        file_hashes = hashes = generate_file_hashes(directory, ['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
+        file_hashes = generate_file_hashes(directory, ['.doc', '.docx', '.xls', '.xlsx', '.pdf', '.png', '.jpg', '.jpeg'])
+        
+        print(file_hashes)
+        
         indexed_hashes = []
 
         for root, dirs, files in os.walk(directory):
@@ -47,17 +55,19 @@ class Indexer:
             
             for file in files:
                 if any(file.endswith(ext) for ext in extensions):
-                    print(f"\n\n##### -> Indexing file {file}")
+                    
                     try:
                         file_path = os.path.join(root, file)
+                        print(f"\n\n##### -> Indexing file {str(file_path)}")                        
                         
-                        hash = str(calculate_hash(file_path))
+                        hash = str(calculate_hash(file_path)[1])
                         
                         indexed = self.check_already_indexed(hash=hash)
                         
                         if len(indexed['hits']['hits']) >= 1:
                             print(f"\n\n\nFile {file} already indexed, looking for duplicates...")
                             duplicate_files = [item for item in file_hashes if item[1] == hash]
+                            
                             duplicate_file_paths = [item[0] for item in duplicate_files]
                             
                             self.update_file_path(hash=hash, file_paths=duplicate_file_paths)
